@@ -6,4 +6,4 @@ server:
 app:
   kafka:
     bootstrapServer: localhost:9092
-    topicName: first_topic
+    topicName: second_topic
