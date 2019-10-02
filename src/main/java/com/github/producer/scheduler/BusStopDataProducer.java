@@ -5,7 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +34,7 @@ public class BusStopDataProducer {
     @Autowired
     RestTemplate restTemplate;
 
-    @Value("${dataMall.accountKey: defaultValue}")
+    @Value("${dataMall.accountKey: getYourOwnKey}")
     private String accountKey;
 
     @Scheduled(fixedRate = 30000)
@@ -51,11 +54,16 @@ public class BusStopDataProducer {
         headers.set(ACCOUNT_KEY, accountKey);
         HttpEntity<String> entity = new HttpEntity<>(PARAMETERS, headers);
 
-        ResponseEntity<String> result = restTemplate.exchange(uri, GET, entity, String.class);
-        LOG.info(format("Response={0}", result));
-
-        //LOG.info(format("Queried successfully resultSize : {0}", result.getBody().length()));
-
+        try {
+            ResponseEntity<String> result = restTemplate.exchange(uri, GET, entity, String.class);
+            if (result.getStatusCodeValue() == 200) {
+                LOG.info(format("Success response ={0}", result.getBody()));
+            } else {
+                LOG.info(format("Response without success ={0}", result));
+            }
+        } catch (Exception e) {
+            LOG.error(format("Exception while calling endpoint={0}", endpoint), e);
+        }
 
     }
 }
