@@ -3,3 +3,7 @@ spring:
     name: producer-app
 server:
   port: 9000
+app:
+  kafka:
+    bootstrapServer: localhost:9092
+    topicName: first_topic
