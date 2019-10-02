@@ -1,5 +1,7 @@
 package com.github.producer.scheduler;
 
+import com.github.producer.kafka_producer.Producer;
+import com.github.producer.model.BusServiceResponse;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +24,9 @@ import static java.util.Arrays.asList;
 import static org.springframework.http.HttpMethod.GET;
 
 @Service
-public class BusStopDataProducer {
+public class BusStopDataRetriever {
 
-    final static Logger LOG = LoggerFactory.getLogger(BusStopDataProducer.class);
+    final static Logger LOG = LoggerFactory.getLogger(BusStopDataRetriever.class);
 
     public static final String BUS_ARRIVAL_URL = "http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2";
     public static final String BUS_STOP_CODE = "BusStopCode";
@@ -36,6 +38,9 @@ public class BusStopDataProducer {
 
     @Value("${dataMall.accountKey: getYourOwnKey}")
     private String accountKey;
+
+    @Autowired
+    Producer producer;
 
     @Scheduled(fixedRate = 30000)
     public void run() throws URISyntaxException, MalformedURLException {
@@ -55,11 +60,13 @@ public class BusStopDataProducer {
         HttpEntity<String> entity = new HttpEntity<>(PARAMETERS, headers);
 
         try {
-            ResponseEntity<String> result = restTemplate.exchange(uri, GET, entity, String.class);
+            ResponseEntity<BusServiceResponse> result = restTemplate.exchange(uri, GET, entity, BusServiceResponse.class);
             if (result.getStatusCodeValue() == 200) {
-                LOG.info(format("Success response ={0}", result.getBody()));
+                BusServiceResponse response = result.getBody();
+                LOG.info(format("Success response={0}", response));
+                producer.publish(response);
             } else {
-                LOG.info(format("Response without success ={0}", result));
+                LOG.info(format("Response without success={0}", result.getStatusCode()));
             }
         } catch (Exception e) {
             LOG.error(format("Exception while calling endpoint={0}", endpoint), e);
