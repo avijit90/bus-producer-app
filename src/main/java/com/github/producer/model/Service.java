@@ -1,23 +1,31 @@
 package com.github.producer.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Service {
 
-    @JsonProperty(value="ServiceNo")
+    @JsonProperty(value = "ServiceNo")
     private String ServiceNo;
 
-    @JsonProperty(value="Operator")
+    @JsonProperty(value = "Operator")
     private String Operator;
 
-    @JsonProperty(value="NextBus")
+    @JsonProperty(value = "NextBus")
     private Bus NextBus;
 
-    @JsonProperty(value="NextBus2")
+    @JsonProperty(value = "NextBus2")
     private Bus NextBus2;
 
-    @JsonProperty(value="NextBus3")
+    @JsonProperty(value = "NextBus3")
     private Bus NextBus3;
+
+    @JsonIgnore
+    private List<Bus> busList;
 
     public String getServiceNo() {
         return ServiceNo;
@@ -57,5 +65,13 @@ public class Service {
 
     public void setNextBus3(Bus nextBus3) {
         NextBus3 = nextBus3;
+    }
+
+    public List<Bus> getBusList() {
+
+        if (CollectionUtils.isEmpty(busList))
+            busList = Arrays.asList(getNextBus(), getNextBus2(), getNextBus3());
+
+        return busList;
     }
 }
