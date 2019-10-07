@@ -1,2 +1,3 @@
-# producer-app
-Producer microservice to query Open API and stream data to kafka topic
+# bus-producer-app
+Producer microservice to query bus data API and stream data to kafka topic.
+
