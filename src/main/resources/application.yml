@@ -1,9 +1,14 @@
+server:
+  port: 9000
+
 spring:
   application:
     name: producer-app
-server:
-  port: 9000
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
 app:
   kafka:
-    bootstrapServer: localhost:9092
     topicName: second_topic
