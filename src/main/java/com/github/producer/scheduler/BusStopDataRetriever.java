@@ -36,7 +36,7 @@ public class BusStopDataRetriever {
     @Autowired
     RestTemplate restTemplate;
 
-    @Value("${dataMall.accountKey: getYourOwnKey}")
+    @Value("${app.dataMall.accountKey: getYourOwnKey}")
     private String accountKey;
 
     @Autowired
