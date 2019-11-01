@@ -19,9 +19,9 @@ import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.join;
 
 @Component
-public class Producer {
+public class BusMessageProducer {
 
-    final Logger LOG = LoggerFactory.getLogger(Producer.class);
+    final Logger LOG = LoggerFactory.getLogger(BusMessageProducer.class);
 
     @Value("${app.kafka.topicName: first_topic}")
     private String topicName;

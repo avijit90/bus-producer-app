@@ -1,6 +1,6 @@
 package com.github.producer.scheduler;
 
-import com.github.producer.kafka_producer.Producer;
+import com.github.producer.kafka_producer.BusMessageProducer;
 import com.github.producer.model.BusServiceResponse;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class BusStopDataRetriever {
     private String accountKey;
 
     @Autowired
-    Producer producer;
+    BusMessageProducer busMessageProducer;
 
     @Scheduled(fixedRate = 30000)
     public void run() throws URISyntaxException, MalformedURLException {
@@ -64,7 +64,7 @@ public class BusStopDataRetriever {
             if (result.getStatusCodeValue() == 200) {
                 BusServiceResponse response = result.getBody();
                 LOG.info(format("Success response={0}", response));
-                producer.publish(response);
+                busMessageProducer.publish(response);
             } else {
                 LOG.info(format("Response without success={0}", result.getStatusCode()));
             }
