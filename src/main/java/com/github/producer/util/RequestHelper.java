@@ -14,15 +14,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import static com.github.producer.util.ApplicationConstants.ACCOUNT_KEY;
+import static com.github.producer.util.ApplicationConstants.PARAMETERS;
 import static java.text.MessageFormat.format;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Component
 public class RequestHelper {
-
-    public static final String ACCOUNT_KEY = "AccountKey";
-    public static final String PARAMETERS = "parameters";
 
     @Value("${app.dataMall.accountKey: getYourOwnKey}")
     private String accountKey;
@@ -31,9 +30,8 @@ public class RequestHelper {
 
     public HttpEntity buildEntityForRequest() {
         LOG.info(format("AccountKey resolved to : {0}", accountKey));
-
         HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(asList(MediaType.APPLICATION_JSON));
+        headers.setAccept(singletonList(MediaType.APPLICATION_JSON));
         headers.set(ACCOUNT_KEY, accountKey);
         return new HttpEntity<>(PARAMETERS, headers);
     }
@@ -44,8 +42,7 @@ public class RequestHelper {
         if (!isEmpty(requestParams))
             requestParams.keySet().forEach(key -> uriBuilder.addParameter(key, requestParams.get(key)));
 
-        URI uri = uriBuilder.build().toURL().toURI();
-        return uri;
+        return uriBuilder.build().toURL().toURI();
     }
 
 }

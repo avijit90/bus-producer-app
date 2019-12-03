@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,8 +19,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static com.github.producer.scheduler.BusStopDataRetriever.BUS_ARRIVAL_URL;
-import static com.github.producer.scheduler.BusStopDataRetriever.BUS_STOP_CODE;
+import static com.github.producer.util.ApplicationConstants.BUS_ARRIVAL_URL;
+import static com.github.producer.util.ApplicationConstants.BUS_STOP_CODE;
 import static com.google.common.collect.ImmutableMap.of;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
