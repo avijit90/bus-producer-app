@@ -68,4 +68,25 @@ public class BusStopDataRetrieverTest {
         verify(busMessageProducer).publish(result.getBody());
     }
 
+    @Test
+    public void givenInvalidResponseThenShouldNotPublishData() throws URISyntaxException, MalformedURLException {
+        URIBuilder uriBuilder = new URIBuilder("http://test/Url");
+        URI uri = uriBuilder.build().toURL().toURI();
+        HttpEntity entity = mock(HttpEntity.class);
+        ResponseEntity<BusServiceResponse> result = mock(ResponseEntity.class);
+
+        when(requestHelper.buildUriForRequest(BUS_ARRIVAL_URL, of(BUS_STOP_CODE, "03011"))).thenReturn(uri);
+        when(requestHelper.buildEntityForRequest()).thenReturn(entity);
+        when(result.getStatusCodeValue()).thenReturn(500);
+        when(restTemplate.exchange(uri, GET, entity, BusServiceResponse.class)).thenReturn(result);
+
+        unit.run();
+
+        verify(requestHelper).buildUriForRequest(eq(BUS_ARRIVAL_URL), eq(of(BUS_STOP_CODE, "03011")));
+        verify(requestHelper).buildEntityForRequest();
+        verify(restTemplate).exchange(eq(uri), eq(GET), eq(entity), eq(BusServiceResponse.class));
+        verify(result).getStatusCodeValue();
+        verifyNoMoreInteractions(busMessageProducer);
+    }
+
 }
