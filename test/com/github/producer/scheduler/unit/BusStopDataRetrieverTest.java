@@ -3,7 +3,7 @@ package com.github.producer.scheduler.unit;
 import com.github.producer.kafka_producer.BusMessageProducer;
 import com.github.producer.model.BusServiceResponse;
 import com.github.producer.scheduler.BusStopDataRetriever;
-import com.github.producer.util.RequestHelper;
+import com.github.producer.util.ApiUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class BusStopDataRetrieverTest {
     BusMessageProducer busMessageProducer;
 
     @Mock
-    RequestHelper requestHelper;
+    ApiUtils apiUtils;
 
     @InjectMocks
     BusStopDataRetriever unit;
@@ -53,15 +53,15 @@ public class BusStopDataRetrieverTest {
         HttpEntity entity = mock(HttpEntity.class);
         ResponseEntity<BusServiceResponse> result = mock(ResponseEntity.class);
 
-        when(requestHelper.buildUriForRequest(BUS_ARRIVAL_URL, of(BUS_STOP_CODE, "03011"))).thenReturn(uri);
-        when(requestHelper.buildEntityForRequest()).thenReturn(entity);
+        when(apiUtils.buildUriForRequest(BUS_ARRIVAL_URL, of(BUS_STOP_CODE, "03011"))).thenReturn(uri);
+        when(apiUtils.buildEntityForRequest()).thenReturn(entity);
         when(result.getStatusCodeValue()).thenReturn(200);
         when(restTemplate.exchange(uri, GET, entity, BusServiceResponse.class)).thenReturn(result);
 
         unit.run();
 
-        verify(requestHelper).buildUriForRequest(eq(BUS_ARRIVAL_URL), eq(of(BUS_STOP_CODE, "03011")));
-        verify(requestHelper).buildEntityForRequest();
+        verify(apiUtils).buildUriForRequest(eq(BUS_ARRIVAL_URL), eq(of(BUS_STOP_CODE, "03011")));
+        verify(apiUtils).buildEntityForRequest();
         verify(restTemplate).exchange(eq(uri), eq(GET), eq(entity), eq(BusServiceResponse.class));
         verify(result).getStatusCodeValue();
         verify(busMessageProducer).publish(result.getBody());
@@ -74,15 +74,15 @@ public class BusStopDataRetrieverTest {
         HttpEntity entity = mock(HttpEntity.class);
         ResponseEntity<BusServiceResponse> result = mock(ResponseEntity.class);
 
-        when(requestHelper.buildUriForRequest(BUS_ARRIVAL_URL, of(BUS_STOP_CODE, "03011"))).thenReturn(uri);
-        when(requestHelper.buildEntityForRequest()).thenReturn(entity);
+        when(apiUtils.buildUriForRequest(BUS_ARRIVAL_URL, of(BUS_STOP_CODE, "03011"))).thenReturn(uri);
+        when(apiUtils.buildEntityForRequest()).thenReturn(entity);
         when(result.getStatusCodeValue()).thenReturn(500);
         when(restTemplate.exchange(uri, GET, entity, BusServiceResponse.class)).thenReturn(result);
 
         unit.run();
 
-        verify(requestHelper).buildUriForRequest(eq(BUS_ARRIVAL_URL), eq(of(BUS_STOP_CODE, "03011")));
-        verify(requestHelper).buildEntityForRequest();
+        verify(apiUtils).buildUriForRequest(eq(BUS_ARRIVAL_URL), eq(of(BUS_STOP_CODE, "03011")));
+        verify(apiUtils).buildEntityForRequest();
         verify(restTemplate).exchange(eq(uri), eq(GET), eq(entity), eq(BusServiceResponse.class));
         verify(result).getStatusCodeValue();
         verifyNoMoreInteractions(busMessageProducer);
