@@ -50,6 +50,7 @@ public class BusStopDataRetriever {
                 LOG.info(format("Success response={0}", response));
                 busMessageProducer.publish(response);
             } else {
+                LOG.info("This is to test if rule is working in github");
                 LOG.info(format("Response without success={0}", result.getStatusCode()));
             }
         } catch (Exception e) {
