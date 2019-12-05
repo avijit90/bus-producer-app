@@ -47,7 +47,7 @@ public class ApiUtils {
         return uriBuilder.build().toURL().toURI();
     }
 
-    public boolean validateResponse(String url, ResponseEntity<BusServiceResponse> result) {
+    public boolean isResponseInvalid(String url, ResponseEntity<BusServiceResponse> result) {
         if (result == null) {
             LOG.info(format("No Response received from url={0}", url));
             return true;

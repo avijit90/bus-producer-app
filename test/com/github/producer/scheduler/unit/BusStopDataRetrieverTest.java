@@ -55,7 +55,7 @@ public class BusStopDataRetrieverTest {
 
         when(apiUtils.buildUriForRequest(BUS_ARRIVAL_URL, of(BUS_STOP_CODE, "03011"))).thenReturn(uri);
         when(apiUtils.buildEntityForRequest()).thenReturn(entity);
-        when(result.getStatusCodeValue()).thenReturn(200);
+        when(apiUtils.isResponseInvalid(uri.toURL().toString(), result)).thenReturn(false);
         when(restTemplate.exchange(uri, GET, entity, BusServiceResponse.class)).thenReturn(result);
 
         unit.run();
@@ -63,7 +63,7 @@ public class BusStopDataRetrieverTest {
         verify(apiUtils).buildUriForRequest(eq(BUS_ARRIVAL_URL), eq(of(BUS_STOP_CODE, "03011")));
         verify(apiUtils).buildEntityForRequest();
         verify(restTemplate).exchange(eq(uri), eq(GET), eq(entity), eq(BusServiceResponse.class));
-        verify(result).getStatusCodeValue();
+        verify(apiUtils).isResponseInvalid(eq(uri.toURL().toString()), eq(result));
         verify(busMessageProducer).publish(result.getBody());
     }
 
@@ -76,7 +76,7 @@ public class BusStopDataRetrieverTest {
 
         when(apiUtils.buildUriForRequest(BUS_ARRIVAL_URL, of(BUS_STOP_CODE, "03011"))).thenReturn(uri);
         when(apiUtils.buildEntityForRequest()).thenReturn(entity);
-        when(result.getStatusCodeValue()).thenReturn(500);
+        when(apiUtils.isResponseInvalid(uri.toURL().toString(), result)).thenReturn(true);
         when(restTemplate.exchange(uri, GET, entity, BusServiceResponse.class)).thenReturn(result);
 
         unit.run();
@@ -84,7 +84,7 @@ public class BusStopDataRetrieverTest {
         verify(apiUtils).buildUriForRequest(eq(BUS_ARRIVAL_URL), eq(of(BUS_STOP_CODE, "03011")));
         verify(apiUtils).buildEntityForRequest();
         verify(restTemplate).exchange(eq(uri), eq(GET), eq(entity), eq(BusServiceResponse.class));
-        verify(result).getStatusCodeValue();
+        verify(apiUtils).isResponseInvalid(eq(uri.toURL().toString()), eq(result));
         verifyNoMoreInteractions(busMessageProducer);
     }
 
