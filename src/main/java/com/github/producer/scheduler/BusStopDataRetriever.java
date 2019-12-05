@@ -2,7 +2,7 @@ package com.github.producer.scheduler;
 
 import com.github.producer.kafka_producer.BusMessageProducer;
 import com.github.producer.model.BusServiceResponse;
-import com.github.producer.util.RequestHelper;
+import com.github.producer.util.ApiUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,27 +34,26 @@ public class BusStopDataRetriever {
     BusMessageProducer busMessageProducer;
 
     @Autowired
-    RequestHelper requestHelper;
+    ApiUtils apiUtils;
 
     @Scheduled(fixedRate = 30000)
     public void run() throws URISyntaxException, MalformedURLException {
 
         LOG.info(format("Starting to query endpoint : {0}", BUS_ARRIVAL_URL));
-        URI uri = requestHelper.buildUriForRequest(BUS_ARRIVAL_URL, of(BUS_STOP_CODE, "03011"));
-        HttpEntity entity = requestHelper.buildEntityForRequest();
+        URI uri = apiUtils.buildUriForRequest(BUS_ARRIVAL_URL, of(BUS_STOP_CODE, "03011"));
+        HttpEntity entity = apiUtils.buildEntityForRequest();
 
         try {
             ResponseEntity<BusServiceResponse> result = restTemplate.exchange(uri, GET, entity, BusServiceResponse.class);
-            if (result.getStatusCodeValue() == 200) {
-                BusServiceResponse response = result.getBody();
-                LOG.info(format("Success response={0}", response));
-                busMessageProducer.publish(response);
-            } else {
-                LOG.info(format("Response without success={0}", result.getStatusCode()));
-            }
+            //Stop processing if response is invalid
+            if (apiUtils.isResponseInvalid(uri.toURL().toString(), result)) return;
+            BusServiceResponse response = result.getBody();
+            LOG.info(format("Success response={0}", response));
+            busMessageProducer.publish(response);
         } catch (Exception e) {
             LOG.error(format("Exception while calling endpoint={0}", BUS_ARRIVAL_URL), e);
         }
 
     }
+
 }
