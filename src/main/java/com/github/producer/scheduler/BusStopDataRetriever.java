@@ -46,7 +46,7 @@ public class BusStopDataRetriever {
         try {
             ResponseEntity<BusServiceResponse> result = restTemplate.exchange(uri, GET, entity, BusServiceResponse.class);
             //Stop processing if response is invalid
-            if (apiUtils.isResponseInvalid(uri.toURL().toString(), result)) return;
+            if (apiUtils.isResponseInvalid(uri.toString(), result)) return;
             BusServiceResponse response = result.getBody();
             LOG.info(format("Success response={0}", response));
             busMessageProducer.publish(response);
